@@ -1,0 +1,251 @@
+{
+  "name": "gestor solicitudes",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "solicitudes internas",
+        "formDescription": "describe solicitud y la enviaremos al equipo correcto",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "nombre"
+            },
+            {
+              "fieldLabel": "email",
+              "fieldType": "email"
+            },
+            {
+              "fieldLabel": "solicitud",
+              "fieldType": "textarea"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.6,
+      "position": [
+        0,
+        0
+      ],
+      "id": "61d5fe83-ef40-4a75-9b57-946a6ac6e023",
+      "name": "On form submission",
+      "webhookId": "866322ca-ae4b-4e0e-ae31-c474830bf0c2"
+    },
+    {
+      "parameters": {
+        "inputText": "={{ $json.solicitud }}",
+        "categories": {
+          "categories": [
+            {
+              "category": "IT",
+              "description": "Problemas con ordenadores, cuentas, contraseñas, accesos, software, correo o red"
+            },
+            {
+              "category": "RRHH",
+              "description": "Vacaciones, nóminas, contratos, bajas, horarios o formación"
+            },
+            {
+              "category": "Compras",
+              "description": "Pedidos de material, proveedores, presupuestos o facturas"
+            },
+            {
+              "category": "Otros",
+              "description": "Cualquier solicitud que no encaje claramente en las anteriores"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.textClassifier",
+      "typeVersion": 1.1,
+      "position": [
+        224,
+        0
+      ],
+      "id": "d6dc9062-575a-48b9-9c10-c968269e6803",
+      "name": "Text Classifier"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        160,
+        208
+      ],
+      "id": "39b778ce-b832-449e-9d5b-6d092f2f3bd2",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "UEzVqs5u2UEkApgI",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "8839693730",
+        "text": "=🎫 Nueva solicitud IT\nDe: {{ $json.nombre }}\nSolicitud: {{ $json.solicitud }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        560,
+        -64
+      ],
+      "id": "454ceaa7-4fee-4c95-a881-6ee65809c22c",
+      "name": "Send a text message",
+      "webhookId": "bfd1d84d-809a-405b-8aa5-c9534b3e0a85",
+      "credentials": {
+        "telegramApi": {
+          "id": "MWxcf2wu1jE52W8y",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "8839693730",
+        "text": "=🎫 Nueva solicitud COMPRAS De: De: {{ $json.nombre }}\nSolicitud: {{ $json.solicitud }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        736,
+        128
+      ],
+      "id": "bf5d6a34-ec8c-47fa-85c1-89b0c0bb3d3e",
+      "name": "Send a text message1",
+      "webhookId": "3dcb33d5-b2cc-4931-afc3-acbba5b9fc52",
+      "credentials": {
+        "telegramApi": {
+          "id": "MWxcf2wu1jE52W8y",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "8839693730",
+        "text": "=🎫 Nueva solicitud RRHH De: {{ $json.nombre }}\nSolicitud: {{ $json.solicitud }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        688,
+        0
+      ],
+      "id": "3d23d23d-78a9-4b69-bda7-5d143ef6a126",
+      "name": "Send a text message2",
+      "webhookId": "bf8f88c3-012b-4d3a-abf0-6b4315e2dfba",
+      "credentials": {
+        "telegramApi": {
+          "id": "MWxcf2wu1jE52W8y",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "=8839693730",
+        "text": "=🎫 Nueva solicitud OTROS De: De: {{ $json.nombre }}\nSolicitud: {{ $json.solicitud }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        592,
+        208
+      ],
+      "id": "b4bad0b8-4f25-4772-9d56-6a8aafb0934e",
+      "name": "Send a text message3",
+      "webhookId": "26807ea4-3667-4127-b584-8a40bbb6e6c4",
+      "credentials": {
+        "telegramApi": {
+          "id": "MWxcf2wu1jE52W8y",
+          "name": "Telegram account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Text Classifier",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Text Classifier",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Text Classifier": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send a text message2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send a text message1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send a text message3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "timeSavedMode": "fixed",
+    "timezone": "Europe/Madrid",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "versionId": "cd60afc4-75b6-4c46-984a-5a465856fd39",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "d6410d934acb64aed49b0733747fe2e0efc41adfaf857af1e44f90f75bd98df4"
+  },
+  "nodeGroups": [],
+  "id": "4xOx8T3QRQ4sYEZD",
+  "tags": []
+}

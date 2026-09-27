@@ -1,0 +1,137 @@
+{
+  "name": "tiempo en malaga telegram",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 13,
+              "triggerAtMinute": 34
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        0,
+        0
+      ],
+      "id": "67bf3cc4-e711-49e7-9c8a-11c495024d36",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "url": "https://api.open-meteo.com/v1/forecast?latitude=36.72&longitude=-4.42&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=Europe/Madrid",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        224,
+        0
+      ],
+      "id": "ec3e21bf-ac27-4230-ba33-8828d9cdcbc3",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b558ebaa-c181-434e-92db-e208cd216fbe",
+              "name": "mensaje",
+              "value": "=☀️ Hoy en Málaga: máx {{ $json.daily.temperature_2m_max[0] }}ºC, mín {{ $json.daily.temperature_2m_min[0] }}ºC. Probabilidad de lluvia: {{ $json.daily.precipitation_probability_max[0] }}%",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        448,
+        0
+      ],
+      "id": "78fb12e2-bb1e-46af-815d-47f826ead4a5",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "chatId": "8839693730",
+        "text": "={{ $json.mensaje }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        672,
+        0
+      ],
+      "id": "dacd1195-71d3-471d-a4e9-a34804170351",
+      "name": "Send a text message",
+      "webhookId": "14e523f1-bcb8-4e02-8c4f-ffb6006ee680",
+      "credentials": {
+        "telegramApi": {
+          "id": "MWxcf2wu1jE52W8y",
+          "name": "Telegram account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "timeSavedMode": "fixed",
+    "timezone": "Europe/Madrid",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "versionId": "118eaf30-d63c-4225-84d3-f997115ff296",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "d6410d934acb64aed49b0733747fe2e0efc41adfaf857af1e44f90f75bd98df4"
+  },
+  "nodeGroups": [],
+  "id": "peWlpM2kyUu6X8fC",
+  "tags": []
+}
